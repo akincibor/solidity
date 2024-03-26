@@ -241,6 +241,54 @@ BOOST_AUTO_TEST_CASE(cli_input)
 	BOOST_CHECK_EQUAL(result.reader.allowedDirectories(), expectedAllowedPaths);
 }
 
+BOOST_AUTO_TEST_CASE(cli_optimizer_disabled_yul_optimization_input_blank_spaces)
+{
+	TemporaryDirectory tempDir(TEST_CASE_NAME);
+	createFilesWithParentDirs({tempDir.path() / "input.sol"});
+
+	std::string const expectedMessage =
+		"--yul-optimizations is invalid with a non-empty sequence if Yul optimizer is disabled."
+		" Note that if an empty or blank string is supplied, the default cleanup sequence is used. The empty sequence is properly denoted by \":\"."
+	;
+	std::string const blankInput = "   ";
+
+	BOOST_CHECK_EXCEPTION(
+		parseCommandLineAndReadInputFiles({
+			"solc",
+			"--strict-assembly",
+			"--yul-optimizations",
+			blankInput,
+			(tempDir.path() / "input.sol").string(),
+		}),
+		CommandLineValidationError,
+		[&](auto const& _exception) { BOOST_TEST(_exception.what() == expectedMessage); return true; }
+	);
+}
+
+BOOST_AUTO_TEST_CASE(cli_optimizer_disabled_yul_optimization_input_empty)
+{
+	TemporaryDirectory tempDir(TEST_CASE_NAME);
+	createFilesWithParentDirs({tempDir.path() / "input.sol"});
+
+	std::string const expectedMessage =
+		"--yul-optimizations is invalid with a non-empty sequence if Yul optimizer is disabled."
+		" Note that if an empty or blank string is supplied, the default cleanup sequence is used. The empty sequence is properly denoted by \":\"."
+	;
+	std::string const emptyInput;
+
+	BOOST_CHECK_EXCEPTION(
+		parseCommandLineAndReadInputFiles({
+			"solc",
+			"--strict-assembly",
+			"--yul-optimizations",
+			emptyInput,
+			(tempDir.path() / "input.sol").string(),
+		}),
+		CommandLineValidationError,
+		[&](auto const& _exception) { BOOST_TEST(_exception.what() == expectedMessage); return true; }
+	);
+}
+
 BOOST_AUTO_TEST_CASE(cli_ignore_missing_some_files_exist)
 {
 	TemporaryDirectory tempDir1(TEST_CASE_NAME);

@@ -1235,7 +1235,7 @@ void CommandLineParser::processArgs()
 		{
 			std::string errorMessage = "--" + g_strYulOptimizations + " is invalid with a non-empty sequence if Yul optimizer is disabled.";
 			if (yulOptimiserSequence.empty())
-				errorMessage += 
+				errorMessage +=
 					" Note that if an empty or blank string is supplied, the default cleanup sequence is used."
 					" The empty sequence is properly denoted by \":\".";
 			solThrow(CommandLineValidationError, errorMessage);
